@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analyzers.Vsix", "Analyzers\Analyzers.Vsix\Analyzers.Vsix.csproj", "{BB5558AA-0993-46A9-B1CD-B9ACC3455745}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{9B98BD04-B86D-4D6A-A017-80D87AFFE280}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B98BD04-B86D-4D6A-A017-80D87AFFE280}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B98BD04-B86D-4D6A-A017-80D87AFFE280}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB5558AA-0993-46A9-B1CD-B9ACC3455745}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB5558AA-0993-46A9-B1CD-B9ACC3455745}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB5558AA-0993-46A9-B1CD-B9ACC3455745}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB5558AA-0993-46A9-B1CD-B9ACC3455745}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
