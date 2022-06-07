@@ -6,20 +6,16 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Rename;
 using Microsoft.CodeAnalysis.Text;
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace PgAnalyzer
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ExceptionNameCodeFix)), Shared]
     public class ExceptionNameCodeFix : CodeFixProvider
     {
-
-
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
             get { return ImmutableArray.Create(Descriptors.ExceptionNameFormat.Id); }
@@ -45,9 +41,6 @@ namespace PgAnalyzer
             ISymbol classModel = documentSemanticModel.GetDeclaredSymbol(classDeclaration, context.CancellationToken);
             string suggestedName = $"{identifier.Text}Exception";
 
-            // Since we reached here we register a CodeAction which consists of
-            // name - to be displayed to a user
-            // createChangedSolution delegate - which gets invoked when user decides to take an action
             //                                  the delegate should return new solution model
             string options;
             context.RegisterCodeFix(
@@ -59,7 +52,7 @@ namespace PgAnalyzer
                     // in most of cases you don't need to write a code for it, therefore there are utilities like Renamer (used below)
                     createChangedSolution: async cancellationToken => await Renamer.RenameSymbolAsync(
                         solution,
-                        classModel,new SymbolRenameOptions(),suggestedName,
+                        classModel, new SymbolRenameOptions(), suggestedName,
                         cancellationToken)),
                 context.Diagnostics);
 

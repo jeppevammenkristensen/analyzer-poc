@@ -6,19 +6,6 @@ using Xunit;
 
 namespace PgAnalyzer.Tests;
 
-public class InitPublicAnalyzerTest : CSharpAnalyzerTest<InitPublicAnalyzer, XUnitVerifier>
-{
-    [Fact]
-    public async Task Init()
-    {
-        TestCode =
-            "public class Test { public void DoTest(){ var someClass = new Someclass(); someClass.Name = \"5\"; someClass.Other = 5 } } public class Someclass { public string Name {get;set;} public int Other {get;set; }}";
-        ExpectedDiagnostics.Clear();
-        await RunAsync();
-
-    }
-}
-
 public class ExceptionNameAnalyzerTests : CSharpAnalyzerTest<PgAnalyzer.ExceptionNameAnalyzer,XUnitVerifier>
 {
     [Fact]

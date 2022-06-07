@@ -10,8 +10,8 @@ namespace PgAnalyzer
             category: "Naming", DiagnosticSeverity.Warning, isEnabledByDefault: true);
 
         internal static readonly DiagnosticDescriptor InitPublic = new DiagnosticDescriptor("JJK0002",
-            "Not all properties transfered", "Not all properties has been transfered", "Init", DiagnosticSeverity.Info,
-            isEnabledByDefault: true);
+            "Not all properties transferred", "Not all properties has been set. Missing are {0}.", "Init", DiagnosticSeverity.Info,
+            true);
 
     }
 }

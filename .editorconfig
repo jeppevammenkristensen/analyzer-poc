@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# JJK0002: Not all properties transferred
+dotnet_diagnostic.JJK0002.severity = suggestion
