@@ -53,7 +53,7 @@ namespace PgAnalyzer
                     location: symbol.Locations.First(),
                     // and those are the messageFormat format args,
                     // if you remember the messageFormat was: "{0} class name should end with Exception"
-                    messageArgs: symbol.Name));
+                    messageArgs: symbol.Name));     
         }
 
         bool IsException(INamedTypeSymbol classSymbol, INamedTypeSymbol exceptionTypeSymbol)

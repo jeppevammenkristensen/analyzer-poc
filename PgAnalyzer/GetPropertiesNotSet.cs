@@ -29,21 +29,7 @@ public class GetPropertiesNotSet
         var initializedProperties = new HashSet<string>();
 
         // Runs through the properties initalized from the constructor
-        if (_objectCreation.Initializer is { } &&
-            _semanticModel.GetOperation(_objectCreation.Initializer) is IObjectOrCollectionInitializerOperation
-                initializerOperation)
-        {
-            foreach (var simpleAssignmentOperation in initializerOperation.Initializers
-                         .OfType<ISimpleAssignmentOperation>())
-            {
-                if (simpleAssignmentOperation.Target is IPropertyReferenceOperation propertyReference)
-                {
-                    initializedProperties.Add(propertyReference.Property.Name);
-                }
-            }
-        }
-
-        var declaration = _objectCreation.Ancestors().OfType<VariableDeclarationSyntax>().FirstOrDefault();
+                var declaration = _objectCreation.Ancestors().OfType<VariableDeclarationSyntax>().FirstOrDefault();
         if (declaration == null) return;
 
         var declarationType = declaration.Type;
@@ -64,6 +50,31 @@ public class GetPropertiesNotSet
 
             var walker = new OpWalker(namedType, declaredSymbol.Name);
             walker.Visit(operation);
+
+
+            if (_objectCreation.Initializer is { } &&
+                _semanticModel.GetOperation(_objectCreation.Initializer) is IObjectOrCollectionInitializerOperation
+                    initializerOperation)
+            {
+                walker.Visit(initializerOperation);
+
+
+                //foreach (var simpleAssignmentOperation in initializerOperation.Initializers
+                //             .OfType<ISimpleAssignmentOperation>())
+                //{
+                //    if (simpleAssignmentOperation.Target is IPropertyReferenceOperation propertyReference)
+                //    {
+                //        initializedProperties.Add(propertyReference.Property.Name);
+                //    }
+                //}
+            }
+
+
+
+
+            
+                       
+
             ExtraProperties = propertySymbols.Select(x => x.Name)
                 .Except(walker.PropertiesSet.Union(initializedProperties)).ToImmutableList();
         }

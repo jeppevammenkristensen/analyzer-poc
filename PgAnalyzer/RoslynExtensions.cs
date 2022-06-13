@@ -12,4 +12,9 @@ public static class RoslynExtensions
     {
         return source.Ancestors().OfType<T>().FirstOrDefault();
     }
+
+    public static bool Implements(this ITypeSymbol symbol, ITypeSymbol type)
+    {
+        return symbol.AllInterfaces.Any(i => SymbolEqualityComparer.Default.Equals(type,i));
+    }
 }

@@ -16,11 +16,10 @@ public class Someclass
 
 public class SomeTestExcepti : Exception
 {
-    public void DoIt()
+    public void DoIt(Dictionary<string,string> strula) 
     {
-        var cls = new Someclass()
-        {
-            TheFulsom = "Hello"
-        };
+        
+        
+        var s = strula["Key"];
     }
 }

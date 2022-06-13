@@ -13,5 +13,9 @@ namespace PgAnalyzer
             "Not all properties transferred", "Not all properties has been set. Missing are {0}.", "Init", DiagnosticSeverity.Info,
             true);
 
+        internal static readonly DiagnosticDescriptor CheckKey = new DiagnosticDescriptor("JJK0003",
+            "Key not checked before call", "Did not check if the key was present.", "Dictionary", DiagnosticSeverity.Warning,
+            true);
+
     }
 }

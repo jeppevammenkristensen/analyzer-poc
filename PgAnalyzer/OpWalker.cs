@@ -17,6 +17,8 @@ public class OpWalker : OperationWalker
         _name = name;
     }
 
+    
+
     public override void VisitSimpleAssignment(ISimpleAssignmentOperation operation)
     {
         var memberName = _name;
