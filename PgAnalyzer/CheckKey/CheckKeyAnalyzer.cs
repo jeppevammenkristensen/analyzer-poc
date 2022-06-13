@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -50,14 +51,30 @@ public class CheckKeyAnalyzer : DiagnosticAnalyzer
         var typeInfo = context.SemanticModel.GetTypeInfo(elementAccess.Expression);
         if (typeInfo.Type == null)
             return;
-        var typeSymbol =
+        var dictionary =
             context.Compilation.GetTypeByMetadataName("System.Collections.IDictionary");
-        if (!typeInfo.Type.Implements(typeSymbol!)) return;
+        var genericDictionary =
+            context.Compilation.GetTypeByMetadataName("System.Collections.Generic.IDictionary`2");
 
-        if (context.Node.GetFirstAncestorOfType<BlockSyntax>() is not { } block) return;
+        if (!typeInfo.Type.Implements(dictionary!))
+        {
+            if (!typeInfo.Type.ImplementsOrIs(s =>
+                {
+                    return s is INamedTypeSymbol ns &&
+                           SymbolEqualityComparer.Default.Equals(ns.ConstructedFrom, genericDictionary);
+                }))
+            {
+                return;
+            }
+        } 
+
+
+        if (context.Node.GetFirstAncestorOfType<MethodDeclarationSyntax>() is not { } block) return;
 
         var walker = new DictionaryWalker(context.SemanticModel.GetOperation(context.Node));
-        walker.Visit(context.SemanticModel.GetOperation(block));
+        walker.Visit(context.SemanticModel.GetOperation((block.Body as SyntaxNode ?? block.ExpressionBody) ?? 
+                                                        
+            null));
 
         if (walker.ChecksKey) return;
 
@@ -90,6 +107,11 @@ public class CheckKeyAnalyzer : DiagnosticAnalyzer
         {
             if (operation == _operation) return;
             base.Visit(operation);
+        }
+
+        public override void VisitExpressionStatement(IExpressionStatementOperation operation)
+        {
+            base.VisitExpressionStatement(operation);
         }
 
         public override void VisitInvocation(IInvocationOperation operation)
