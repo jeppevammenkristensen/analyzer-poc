@@ -30,7 +30,7 @@ public class InitPublicAnalyzerTest : CSharpAnalyzerTest<InitPublicAnalyzer, XUn
     public async Task Init()
     {
         TestCode =
-            "public class Test { public void DoTest(){ var someClass = new Someclass(); someClass.Name = \"5\"; someClass.Other = 5; } } public class Someclass { public string Name {get;set;} public int Other {get;set; } public int TheThird {get;set;}}";
+            "public class Test { public void DoTest(){ var someClass = new Someclass(){ Name = \"5\" }; someClass.Other = 5; } } public class Someclass { public string Name {get;set;} public int Other {get;set; } public int TheThird {get;set;}}";
         ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.InitPublic.Id, DiagnosticSeverity.Info)
             .WithMessage("Not all properties has been set. Missing are TheThird.")
             .WithSpan(1, 63, 1, 72));

@@ -9,6 +9,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Formatting;
 
 namespace PgAnalyzer;
 
@@ -95,7 +96,7 @@ public class InitPublicCodeFix : CodeFixProvider
                 );
             }
 
-            var newBlock = block.InsertNodesAfter(localDecl, nodes).NormalizeWhitespace();
+            var newBlock = block.InsertNodesAfter(localDecl, nodes).NormalizeWhitespace().WithAdditionalAnnotations(Formatter.Annotation);
             if (await document.GetSyntaxRootAsync(token) is { } syntaxRootAsync)
             {
                 return document.WithSyntaxRoot(syntaxRootAsync.ReplaceNode(block, newBlock));
