@@ -19,9 +19,8 @@ public class SomeTestExcepti : Exception
     public void DoIt(Dictionary<string,string> strula)
     {
         var theKey = "ultra";
-        if (strula.ContainsKey(theKey))
-        {
-            var s = strula[theKey];
-        }
+        
+        var s = strula[theKey];
+        
     }
 }

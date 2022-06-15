@@ -12,9 +12,9 @@ public class InitPublicCodeFixTest : CSharpCodeFixTest<InitPublicAnalyzer, InitP
     public async Task Poc()
     {
         TestCode =
-            "public class Test { public void DoTest(){ var someClass = new Someclass(567); someClass.Name = \"5\"; someClass.Other = 5; } } public class Someclass { public Someclass(double fruta){ TheForth = fruta; } public string Name {get;set;} public int Other {get;set; } public double TheForth {get;set;} public int TheThird {get;set;}}";
+            "public class Test { public void DoTest(){ var someClass = new Someclass(); someClass.Name = \"5\"; someClass.Other = 5; } } public class Someclass { public Someclass(){  } public string Name {get;set;} public int Other {get;set; }  public int TheThird {get;set;}}";
 
-        ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.InitPublic.Id, DiagnosticSeverity.Info)
+        ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.InitPublic.Id, DiagnosticSeverity.Warning)
             .WithMessage("Not all properties has been set. Missing are TheThird.")
             .WithSpan(1, 63, 1, 72));
 

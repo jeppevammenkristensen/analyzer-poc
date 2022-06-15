@@ -48,6 +48,9 @@ public class CheckKeyAnalyzer : DiagnosticAnalyzer
             return;
         }
 
+        if (elementAccess.Parent is AssignmentExpressionSyntax aes && aes.Left == elementAccess)
+            return;
+
         var typeInfo = context.SemanticModel.GetTypeInfo(elementAccess.Expression);
         if (typeInfo.Type == null)
             return;

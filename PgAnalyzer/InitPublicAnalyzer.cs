@@ -5,6 +5,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using System.IO;
 
 namespace PgAnalyzer;
 
@@ -30,7 +31,7 @@ public class InitPublicAnalyzer : DiagnosticAnalyzer
 
     private void AnalyzeConstructor(SyntaxNodeAnalysisContext context)
     {
-        if (context.Node is not ObjectCreationExpressionSyntax objectCreation)
+        if (context.Node is not BaseObjectCreationExpressionSyntax objectCreation)
         {
             return;
         }
@@ -41,6 +42,16 @@ public class InitPublicAnalyzer : DiagnosticAnalyzer
         if (getPropertiesNotSet.ExtraProperties.IsEmpty)
             return;
 
+        Location location = Location.None;
+        if (objectCreation is ObjectCreationExpressionSyntax simple)
+        {
+            location = simple.Type.GetLocation();
+        }
+        else if (objectCreation is ImplicitObjectCreationExpressionSyntax implicitObjectCreation)
+        {
+            location = implicitObjectCreation.NewKeyword.GetLocation();
+        }
+
 
         context.ReportDiagnostic(
             Diagnostic.Create(
@@ -48,7 +59,7 @@ public class InitPublicAnalyzer : DiagnosticAnalyzer
                 descriptor: Descriptors.InitPublic,
                 // current symbol location in code (file, line and column for start/end),
                 // it will become more clear further, writing tests
-                location: objectCreation.Type.GetLocation(),
+                location: location,
                 // and those are the messageFormat format args,
                 // if you remember the messageFormat was: "{0} class name should end with Exception"
                 messageArgs: string.Join(",", getPropertiesNotSet.ExtraProperties.Select(x => x))));

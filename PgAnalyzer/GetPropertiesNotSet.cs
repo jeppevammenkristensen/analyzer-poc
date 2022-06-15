@@ -11,9 +11,9 @@ namespace PgAnalyzer;
 public class GetPropertiesNotSet
 {
     private readonly SemanticModel _semanticModel;
-    private readonly ObjectCreationExpressionSyntax _objectCreation;
+    private readonly BaseObjectCreationExpressionSyntax _objectCreation;
 
-    public GetPropertiesNotSet(SemanticModel semanticModel, ObjectCreationExpressionSyntax objectCreation)
+    public GetPropertiesNotSet(SemanticModel semanticModel, BaseObjectCreationExpressionSyntax objectCreation)
     {
         _semanticModel = semanticModel;
         _objectCreation = objectCreation;
@@ -37,7 +37,7 @@ public class GetPropertiesNotSet
 
         if (declaringType.Symbol is INamedTypeSymbol namedType)
         {
-            var propertySymbols = namedType.GetMembers().OfType<IPropertySymbol>().Where(x => x.SetMethod != null)
+            var propertySymbols = namedType.GetMembers().OfType<IPropertySymbol>().Where(x => x.SetMethod != null && x.DeclaredAccessibility == Accessibility.Public)
                 .ToList();
             if (!propertySymbols.Any())
                 return;
