@@ -28,4 +28,12 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="AssertToFluent\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Analyzers.Shared\Analyzers.Shared.csproj" />
+  </ItemGroup>
+
 </Project>
