@@ -43,6 +43,8 @@ public class CheckKeyCodeFixTest : CSharpCodeFixTest<CheckKeyAnalyzer, CheckKeyC
     [Fact]
     public async Task Poc()
     {
+        Assert.True("hello" == "hello");
+
         TestCode =
             "using System.Collections.Generic; namespace Supra { public class Testing { public void Test(){ IDictionary<string,string> dict = new Dictionary<string,string>(); var res = dict[\"hello\"]; }}}";
 
