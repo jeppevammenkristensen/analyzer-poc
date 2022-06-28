@@ -21,5 +21,9 @@ namespace PgAnalyzer
             "Use fluent instead", "Use fluent instead", "Dictionary", DiagnosticSeverity.Warning,
             true);
 
+        internal static readonly DiagnosticDescriptor TypeOverload = new DiagnosticDescriptor("JJK0005",
+            "Add fluent overloads", "Add fluent overloads", "Dictionary", DiagnosticSeverity.Warning,
+            true);
+
     }
 }

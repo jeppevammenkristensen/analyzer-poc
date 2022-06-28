@@ -10,13 +10,16 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace PgAnalyzer;
 
+public class TypeNamesConstants
+{
+    public const string Dictionary = "System.Collections.IDictionary";
+    public const string GenericDictionary = "System.Collections.Generic.IDictionary`2";
+}
+
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public class CheckKeyAnalyzer : DiagnosticAnalyzer
 {
-    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-    {
-        get { return ImmutableArray.Create(Descriptors.CheckKey); }
-    }
+    public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Descriptors.CheckKey);
 
 
     public override void Initialize(AnalysisContext context)
@@ -27,17 +30,13 @@ public class CheckKeyAnalyzer : DiagnosticAnalyzer
         context.RegisterCompilationStartAction(compilationContext =>
         {
             var typeSymbol =
-                compilationContext.Compilation.GetTypeByMetadataName("System.Collections.IDictionary");
+                compilationContext.Compilation.GetTypeByMetadataName(TypeNamesConstants.Dictionary);
 
             if (typeSymbol != null)
             {
                 compilationContext.RegisterSyntaxNodeAction(AnalyzeElementAccess, SyntaxKind.ElementAccessExpression);
             }
         });
-        // this is where the coding starts,
-        // in this case we register a handler (AnalyzeNamedType method defined below)
-        // to be invoked analyzing NamedType (class, interface, delegate etc) symbols
-       
 
     }
 
@@ -55,23 +54,21 @@ public class CheckKeyAnalyzer : DiagnosticAnalyzer
         if (typeInfo.Type == null)
             return;
         var dictionary =
-            context.Compilation.GetTypeByMetadataName("System.Collections.IDictionary");
+            context.Compilation.GetTypeByMetadataName(TypeNamesConstants.Dictionary);
         var genericDictionary =
-            context.Compilation.GetTypeByMetadataName("System.Collections.Generic.IDictionary`2");
+            context.Compilation.GetTypeByMetadataName(TypeNamesConstants.GenericDictionary);
 
         if (!typeInfo.Type.Implements(dictionary!))
         {
-            if (!typeInfo.Type.ImplementsOrIs(s =>
-                {
-                    return s is INamedTypeSymbol ns &&
-                           SymbolEqualityComparer.Default.Equals(ns.ConstructedFrom, genericDictionary);
-                }))
+            if (!typeInfo.Type.ImplementsOrIs(s => s is INamedTypeSymbol ns &&
+                                                   SymbolEqualityComparer.Default.Equals(ns.ConstructedFrom, genericDictionary)))
             {
                 return;
             }
-        } 
+        }
 
 
+        context.Node.Ancestors().IsAnyOfType<MethodDeclarationSyntax, ConstructorDeclarationSyntax>();
         if (context.Node.GetFirstAncestorOfType<MethodDeclarationSyntax>() is not { } block) return;
 
         var walker = new DictionaryWalker(context.SemanticModel.GetOperation(context.Node));

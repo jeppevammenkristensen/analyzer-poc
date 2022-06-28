@@ -6,7 +6,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>Jeppe Roi Kristensen</Authors>
     <Company>Jrk Consult</Company>
-    <VersionPrefix>0.0.14</VersionPrefix>
+    <VersionPrefix>0.0.15</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>

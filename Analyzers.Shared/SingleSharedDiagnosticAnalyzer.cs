@@ -52,7 +52,7 @@ namespace Analyzers.Shared
             PostInitialize(context);
         }
 
-        private void HandleContext(AnalysisContext analysisContext)
+        protected virtual void HandleContext(AnalysisContext analysisContext)
         {
             throw new NotImplementedException("This method should be handled");
         }
