@@ -13,13 +13,15 @@ namespace PgAnalyzer.AssertToFluent;
 public class AssertToFluentAnalyzer : SingleSharedDiagnosticAnalyzer
 {
     public const string XunitAssert = "Xunit.Assert";
+    public const string NUnitAssert = "NUnit.Framework.Assert";
 
     public override DiagnosticDescriptor Descriptor { get; } = Descriptors.AssertToFluent;
 
     protected override void DoSetup()
     {
-        AddType(XunitAssert);
-        AddType("FluentAssertions.AssertionExtensions");
+        AddType(XunitAssert, false);
+        AddType("FluentAssertions.AssertionExtensions", true);
+        AddType(NUnitAssert,false);
     }
 
     protected override void HandleStartCompilationContext(Dictionary<string, INamedTypeSymbol> types,
@@ -34,10 +36,22 @@ public class AssertToFluentAnalyzer : SingleSharedDiagnosticAnalyzer
     {
         if (ctx.Operation is not IInvocationOperation invocationOperation) return;
 
-        var xunit = types[XunitAssert];
+        INamedTypeSymbol? xunit = null;
+
+        if (types.ContainsKey(XunitAssert))
+        {
+            xunit = types[XunitAssert];
+        }
+
+        INamedTypeSymbol? nunit = null;
+        if (types.ContainsKey(NUnitAssert))
+        {
+            nunit = types[NUnitAssert];
+        }
+        
 
         if (invocationOperation.TargetMethod.Name == "True" && invocationOperation.TargetMethod.ReceiverType is INamedTypeSymbol type &&
-            type.Equals(xunit, SymbolEqualityComparer.IncludeNullability))
+            (type.Equals(xunit, SymbolEqualityComparer.IncludeNullability) || type.Equals(nunit, SymbolEqualityComparer.IncludeNullability)))
         {
             ctx.ReportDiagnostic(
                 Diagnostic.Create(

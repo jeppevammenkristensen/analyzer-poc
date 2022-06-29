@@ -15,7 +15,6 @@ public class FluentRewriterTests
         var testHarness = new TestHarness().WithAssert("Assert.True(something.Property);");
         var subject = testHarness.Subject;
         testHarness.Code.Should().BeEquivalentTo(String.Empty);
-testHarness.Yay.Should().BeEquivalentTo(true);
         var result = subject.Visit(testHarness.CompilationUnit);
     }
 

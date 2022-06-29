@@ -13,6 +13,7 @@ namespace Analyzers.Shared
         
         public abstract DiagnosticDescriptor Descriptor { get;  }
 
+        protected ImmutableHashSet<string> RequiredTypeNames { get; private set; } = ImmutableHashSet<string>.Empty;
         protected ImmutableHashSet<string> TypeNames { get; private set; } = ImmutableHashSet<string>.Empty;
 
         protected SingleSharedDiagnosticAnalyzer()
@@ -27,7 +28,7 @@ namespace Analyzers.Shared
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze |
                                                    GeneratedCodeAnalysisFlags.ReportDiagnostics);
 
-            if (TypeNames.IsEmpty)
+            if (RequiredTypeNames.IsEmpty && TypeNames.IsEmpty)
             {
                 HandleContext(context);
             }
@@ -35,11 +36,14 @@ namespace Analyzers.Shared
             {
                 context.RegisterCompilationStartAction(ctx =>
                 {
-                    var results = TypeNames
+                    var results = RequiredTypeNames
                         .Select(type => (TypeName: type, Type : ctx.Compilation.GetTypeByMetadataName(type)))
                         .ToArray();
                     if (results.All(x => x.Type != null))
                     {
+                        results = results.Concat(TypeNames.Select(type =>
+                            (TypeName: type, Type: ctx.Compilation.GetTypeByMetadataName(type)))).ToArray();
+
                         HandleStartCompilationContext(results.ToDictionary(x => x.TypeName, x => x.Type), ctx);
                     }
                 });
@@ -77,14 +81,24 @@ namespace Analyzers.Shared
 
         protected abstract void DoSetup();
 
-        protected void AddType(string typeName)
+        protected void AddType(string typeName, bool required)
         {
-            TypeNames = TypeNames.Add(typeName);
+            if (required)
+            {
+                RequiredTypeNames = RequiredTypeNames.Add(typeName);
+            }
+            else
+            {
+                TypeNames = TypeNames.Add(typeName);
+            }
+            
         }
 
-        protected void AddGenericType(string typeName, int typeParametersCount)
+        
+
+        protected void AddGenericType(string typeName, int typeParametersCount, bool required)
         {
-            TypeNames = TypeNames.Add($"{typeName}`{typeParametersCount}");
+            AddType($"{typeName}`{typeParametersCount}", required);
         }
 
     }
