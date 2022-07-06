@@ -2,9 +2,9 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using PgAnalyzer.AssertToFluent;
 using Xunit;
 using FluentAssertions;
+using PgAnalyzer.TypeMultiplier;
 
 namespace PgAnalyzer.Tests.AssertToFluent;
 public class FluentRewriterTests

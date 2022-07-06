@@ -28,6 +28,18 @@ public class GetPropertiesNotSet
         // Contains the property names for properties initalized somehow
         var initializedProperties = new HashSet<string>();
 
+        var constructor = _semanticModel.GetOperation(_objectCreation) as IObjectCreationOperation;
+        var oper = _semanticModel.GetOperation(constructor.Constructor.DeclaringSyntaxReferences.FirstOrDefault().GetSyntax());
+
+        
+
+        if (_objectCreation.Initializer is {} initalizer)
+        {
+            foreach (var property in initalizer.Expressions.OfType<AssignmentExpressionSyntax>().Select(x => x.Left is IdentifierNameSyntax identi ? identi.Identifier.Text : null).Where(x => x != null))
+            {
+                initializedProperties.Add(property);
+            }
+        }
         // Runs through the properties initalized from the constructor
                 var declaration = _objectCreation.Ancestors().OfType<VariableDeclarationSyntax>().FirstOrDefault();
         if (declaration == null) return;
@@ -50,6 +62,8 @@ public class GetPropertiesNotSet
 
             var walker = new OpWalker(namedType, declaredSymbol.Name);
             walker.Visit(operation);
+             walker.Visit(oper);
+            
 
 
             if (_objectCreation.Initializer is { } &&

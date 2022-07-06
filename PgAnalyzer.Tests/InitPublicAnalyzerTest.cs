@@ -31,7 +31,7 @@ public class InitPublicAnalyzerTest : CSharpAnalyzerTest<InitPublicAnalyzer, XUn
     {
         TestCode =
             "public class Test { public void DoTest(){ var someClass = new Someclass(){ Name = \"5\" }; someClass.Other = 5; } } public class Someclass { public string Name {get;set;} public int Other {get;set; } public int TheThird {get;set;}}";
-        ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.InitPublic.Id, DiagnosticSeverity.Info)
+        ExpectedDiagnostics.Add(new DiagnosticResult(Descriptors.InitPublic.Id, DiagnosticSeverity.Warning)
             .WithMessage("Not all properties has been set. Missing are TheThird.")
             .WithSpan(1, 63, 1, 72));
         await RunAsync();
@@ -45,4 +45,25 @@ public class InitPublicAnalyzerTest : CSharpAnalyzerTest<InitPublicAnalyzer, XUn
         ExpectedDiagnostics.Clear();
         await RunAsync();
     }
+
+    [Fact]
+    public async Task InitFromConstructor_AllPropertiesInitalized_NoDiagnosticEmitted()
+    {
+        TestCode =
+            "public class Test { public void DoTest(){ var someClass = new Someclass(\"test\");  } } public class Someclass { public Someclass(string name){ Name = name; } public string Name {get;set;} }";
+        ExpectedDiagnostics.Clear();
+        await RunAsync();
+    }
+
+
+    [Fact]
+    public async Task InitBuiltInType_NoProperties_NoDiagnosticEmitted()
+    {
+        
+        TestCode =
+            "public class Test { public void DoTest(){ var st = new System.Collections.Generic.List<int>(); }}";
+        ExpectedDiagnostics.Clear();
+        await RunAsync();
+    }
+
 }

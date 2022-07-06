@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace PgAnalyzer.AssertToFluent;
+namespace PgAnalyzer.TypeMultiplier;
 
 public class FluentRewriter : CSharpSyntaxRewriter
 {
@@ -24,7 +24,7 @@ public class FluentRewriter : CSharpSyntaxRewriter
                         SyntaxFactory.IdentifierName("FluentAssertions")))
                 .NormalizeWhitespace();
             return base.VisitCompilationUnit(node);
-        } 
+        }
 
         return base.VisitCompilationUnit(node);
     }
@@ -35,7 +35,7 @@ public class FluentRewriter : CSharpSyntaxRewriter
         {
             var expression = node.ArgumentList.Arguments.FirstOrDefault()?.Expression;
 
-            if (expression is BinaryExpressionSyntax firstExpression )
+            if (expression is BinaryExpressionSyntax firstExpression)
             {
                 if (firstExpression.Kind() == SyntaxKind.EqualsExpression)
                 {
@@ -68,7 +68,7 @@ public class FluentRewriter : CSharpSyntaxRewriter
                                     SyntaxFactory.IdentifierName("BeEquivalentTo")))
                             .WithArgumentList(
                                 SyntaxFactory.ArgumentList(
-                                    SyntaxFactory.SingletonSeparatedList<ArgumentSyntax>(
+                                    SyntaxFactory.SingletonSeparatedList(
                                         SyntaxFactory.Argument(
                                             firstExpression.Right))))
                             .NormalizeWhitespace());
@@ -99,7 +99,7 @@ public class FluentRewriter : CSharpSyntaxRewriter
                                 SyntaxFactory.IdentifierName("Should"))),
                         SyntaxFactory.IdentifierName("BeTrue"))));
             }
-            
+
         }
 
         return base.VisitInvocationExpression(node);

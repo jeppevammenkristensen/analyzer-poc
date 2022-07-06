@@ -4,6 +4,34 @@ using Microsoft.CodeAnalysis.Operations;
 
 namespace PgAnalyzer;
 
+public class ConstructorWalker : OperationWalker
+{
+    private readonly INamedTypeSymbol _source;
+    private readonly string _name;
+
+    public HashSet<string> PropertiesSet { get; } = new HashSet<string>();
+
+    public ConstructorWalker(INamedTypeSymbol source, string name)
+    {
+        _source = source;
+        _name = name;
+    }
+
+    public override void VisitSimpleAssignment(ISimpleAssignmentOperation operation)
+    {
+        if (operation.Target is IPropertyReferenceOperation propertyReference)
+        {
+            if (propertyReference.Instance.Type.Equals(_source, SymbolEqualityComparer.Default) &&
+                propertyReference.Instance is ILocalReferenceOperation localRef && localRef.Local.Name == _name)
+            {
+                PropertiesSet.Add(propertyReference.Property.Name);
+            }
+        }
+
+        base.VisitSimpleAssignment(operation);
+    }
+}
+
 public class OpWalker : OperationWalker
 {
     private readonly INamedTypeSymbol _source;
@@ -17,8 +45,6 @@ public class OpWalker : OperationWalker
         _name = name;
     }
 
-    
-
     public override void VisitSimpleAssignment(ISimpleAssignmentOperation operation)
     {
         var memberName = _name;
@@ -26,7 +52,7 @@ public class OpWalker : OperationWalker
         if (operation.Target is IPropertyReferenceOperation propertyReference)
         {
             if (propertyReference.Instance.Type.Equals(_source, SymbolEqualityComparer.Default) &&
-                propertyReference.Instance is ILocalReferenceOperation localRef && localRef.Local.Name == _name)
+                (propertyReference.Instance is ILocalReferenceOperation localRef && localRef.Local.Name == _name) || (propertyReference.Instance is IInstanceReferenceOperation))
             {
                 PropertiesSet.Add(propertyReference.Property.Name);
             }

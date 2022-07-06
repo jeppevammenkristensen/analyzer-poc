@@ -6,9 +6,8 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Authors>Jeppe Roi Kristensen</Authors>
     <Company>Jrk Consult</Company>
-    <VersionPrefix>0.0.15</VersionPrefix>
+    <VersionPrefix>0.0.17</VersionPrefix>
   </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="bin\**" />
     <EmbeddedResource Remove="bin\**" />
@@ -26,10 +25,6 @@
   <ItemGroup>
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     <None Include="..\.editorconfig" Link=".editorconfig" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="AssertToFluent\" />
   </ItemGroup>
 
   <ItemGroup>

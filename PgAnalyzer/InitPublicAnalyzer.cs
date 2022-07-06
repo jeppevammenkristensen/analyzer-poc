@@ -52,6 +52,7 @@ public class InitPublicAnalyzer : DiagnosticAnalyzer
             location = implicitObjectCreation.NewKeyword.GetLocation();
         }
 
+        var joinedProperties = string.Join(",", getPropertiesNotSet.ExtraProperties.Select(x => x));
 
         context.ReportDiagnostic(
             Diagnostic.Create(
@@ -62,7 +63,9 @@ public class InitPublicAnalyzer : DiagnosticAnalyzer
                 location: location,
                 // and those are the messageFormat format args,
                 // if you remember the messageFormat was: "{0} class name should end with Exception"
-                messageArgs: string.Join(",", getPropertiesNotSet.ExtraProperties.Select(x => x))));
+                messageArgs: joinedProperties,
+                properties: ImmutableDictionary<string, string?>.Empty.Add("Properties",
+                    joinedProperties)));
     }
 }
 
